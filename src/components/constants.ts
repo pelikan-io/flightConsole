@@ -24,6 +24,14 @@ export const FAILURE_DOMAIN_RANGE = [0.1, 100]; // (%)
 export const DEFAULT_FAILURE_DOMAIN = 5.0; // 5% of the nodes may be lost at once
 
 // ============================================================================
+// Constants: Segcache Related
+// ============================================================================
+export const HASH_OVERHEAD: Record<string, number> = {
+  segcache: 10,
+  rds: 10,
+  pingserver: 0,
+};
+
 // Constants: Pelikan Related
 // ============================================================================
 export const CONN_OVERHEAD = 33 * KB; // 2 16KiB buffers, one channel, and stream overhead
@@ -31,12 +39,6 @@ export const TLS_OVERHEAD = 64 * KB; // 2 32KiB buffers, one channel, and stream
 export const SAFETY_BUF = 128; // in MB
 export const BASE_OVERHEAD = 10; // in MB
 export const KQPS = 60; // much lower than single-instance max, picked to scale to 10 jobs/host
-
-export const HASH_OVERHEAD: Record<string, number> = {
-  segcache: 10,
-  rds: 10,
-  pingserver: 0,
-};
 
 // ITEM_HDR_SIZE + CAS
 export const ITEM_OVERHEAD: Record<string, number> = {

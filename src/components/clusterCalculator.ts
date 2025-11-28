@@ -86,12 +86,7 @@ export interface BaseConfig {
   instance: number;
 }
 
-export interface SegcacheConfig extends BaseConfig {
-  hashPower: number;
-  segMem: number;
-}
-
-export interface RdsConfig extends BaseConfig {
+export interface CacheConfig extends BaseConfig {
   hashPower: number;
   segMem: number;
 }
@@ -99,8 +94,7 @@ export interface RdsConfig extends BaseConfig {
 export interface PingserverConfig extends BaseConfig {}
 
 export type CalculatorConfig =
-  | SegcacheConfig
-  | RdsConfig
+  | CacheConfig
   | PingserverConfig;
 
 // ============================================================================
@@ -141,8 +135,7 @@ export function getDefaultArgs(runnable: Runnable): CalculatorArgs {
 /**
  * Calculate job configuration according to requirements.
  *
- * For segcache, returns config with: cpu, ram, disk, hashPower, segMem, instance
- * For rds, returns config with: cpu, ram, disk, hashPower, segMem, instance
+ * For segcache/rds, returns config with: cpu, ram, disk, hashPower, segMem, instance
  * For pingserver, returns config with: cpu, ram, disk, instance
  *
  * Also returns analysis containing: bottleneck
@@ -245,32 +238,13 @@ export function calculate(args: CalculatorArgs): { config: CalculatorConfig; ana
     bottleneck,
   };
 
-  // Return runnable-specific config
-  switch (args.runnable) {
-    case "segcache":
-      return {
-        config: {
-          ...baseConfig,
-          hashPower,
-          segMem,
-        } as SegcacheConfig,
-        analysis,
-      };
-
-    case "rds":
-      return {
-        config: {
-          ...baseConfig,
-          hashPower,
-          segMem,
-        } as RdsConfig,
-        analysis,
-      };
-
-    default:
-      return {
-        config: baseConfig,
-        analysis,
-      };
-  }
+  // Return config with memory calculations for segcache/rds
+  return {
+    config: {
+      ...baseConfig,
+      hashPower,
+      segMem,
+    } as CacheConfig,
+    analysis,
+  };
 }
