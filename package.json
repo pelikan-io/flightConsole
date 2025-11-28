@@ -1,0 +1,15 @@
+{
+  "name": "flight-console",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "observable preview",
+    "build": "observable build",
+    "deploy": "observable deploy",
+    "clean": "rimraf dist",
+    "observable": "observable"
+  },
+  "devDependencies": {
+    "@observablehq/framework": "latest"
+  }
+}

@@ -1,0 +1,11 @@
+# Data loaders directory
+
+Place your data loader files here. Observable Framework supports various data loaders:
+- JavaScript/TypeScript (.js, .ts)
+- Python (.py)
+- R (.R)
+- Shell scripts (.sh)
+- SQL (.sql)
+- And more...
+
+See https://observablehq.com/framework/data-loaders for documentation.

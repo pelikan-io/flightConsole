@@ -1,0 +1,10 @@
+# Components directory
+
+Place your reusable JavaScript components here.
+Import them in your pages using:
+
+```js
+import {myComponent} from "./components/myComponent.js";
+```
+
+See https://observablehq.com/framework/javascript/imports for documentation.
