@@ -50,7 +50,7 @@ export interface SegcacheConfig {
  */
 function hashParameters(nkey: number): { hashPower: number; ramHash: number } {
   const hashPower = Math.ceil(Math.log2(nkey));
-  const ramHash = Math.ceil((HASH_OVERHEAD["segcache"] * Math.pow(2, hashPower)) / MB);
+  const ramHash = Math.ceil((HASH_OVERHEAD * Math.pow(2, hashPower)) / MB);
   return { hashPower, ramHash };
 }
 

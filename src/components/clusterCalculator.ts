@@ -104,12 +104,9 @@ export type CalculatorConfig =
 /**
  * Calculate hash parameters for the given number of keys
  */
-export function hashParameters(
-  nkey: number,
-  runnable: Runnable
-): { hashPower: number; ramHash: number } {
+export function hashParameters(nkey: number): { hashPower: number; ramHash: number } {
   const hashPower = Math.ceil(Math.log2(nkey));
-  const ramHash = Math.ceil((HASH_OVERHEAD[runnable] * Math.pow(2, hashPower)) / MB);
+  const ramHash = Math.ceil((HASH_OVERHEAD * Math.pow(2, hashPower)) / MB);
   return { hashPower, ramHash };
 }
 
@@ -196,7 +193,7 @@ export function calculate(args: CalculatorArgs): { config: CalculatorConfig; ana
     const ram = (ramGb * GB) / MB; // change unit to MB
     const nLow = Math.ceil(ramData / ram); // number of shards, lower bound
     const nkeyPerShard = (args.nkey * K) / nLow; // number of keys per shard, upper bound
-    const { ramHash } = hashParameters(nkeyPerShard, args.runnable); // upper bound
+    const { ramHash } = hashParameters(nkeyPerShard); // upper bound
     const n = Math.ceil(ramData / (ram - ramFixed - ramConn - ramHash));
     njobMem.push(n);
   }
@@ -221,8 +218,8 @@ export function calculate(args: CalculatorArgs): { config: CalculatorConfig; ana
   const nkeyPerShard =
     (sortedRam[index] * GB - ramFixed * MB - ramConn * MB) / itemSize;
 
-  // Calculate runnable-specific values
-  const { hashPower, ramHash } = hashParameters(nkeyPerShard, args.runnable);
+  // Calculate hash parameters
+  const { hashPower, ramHash } = hashParameters(nkeyPerShard);
   const segMem = (sortedRam[index] * GB) / MB - ramFixed - ramConn - ramHash;
 
   // Build base config

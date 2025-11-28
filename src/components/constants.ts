@@ -24,13 +24,9 @@ export const FAILURE_DOMAIN_RANGE = [0.1, 100]; // (%)
 export const DEFAULT_FAILURE_DOMAIN = 5.0; // 5% of the nodes may be lost at once
 
 // ============================================================================
-// Constants: Segcache Related
+// Constants: Cache Related
 // ============================================================================
-export const HASH_OVERHEAD: Record<string, number> = {
-  segcache: 10,
-  rds: 10,
-  pingserver: 0,
-};
+export const HASH_OVERHEAD = 10; // per hash table entry, in bytes
 
 // Constants: Pelikan Related
 // ============================================================================
