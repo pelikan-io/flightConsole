@@ -6,14 +6,15 @@ export default {
   // The pages and sections in the sidebar. If you don't specify this,
   // all pages will be listed in alphabetical order. Customize this to
   // organize your pages into sections and give them human-readable titles.
-  // pages: [
-  //   {
-  //     name: "Examples",
-  //     pages: [
-  //       {name: "Dashboard", path: "/dashboard"},
-  //     ]
-  //   }
-  // ],
+  pages: [
+    {
+      name: "Calculators",
+      pages: [
+        {name: "Cluster Calculator", path: "/cluster"},
+        {name: "Segcache Calculator", path: "/segcache"},
+      ]
+    }
+  ],
 
   // Content to add to the head of the page, e.g. for a custom stylesheet.
   head: `<link rel="icon" href="observable.png" type="image/png" sizes="32x32">`,
