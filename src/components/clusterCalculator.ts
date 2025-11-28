@@ -66,9 +66,9 @@ export {
 export type Runnable = "segcache" | "rds" | "pingserver";
 
 export interface CalculatorArgs {
-  qps: number; // query per second in thousands/K
+  qps: number; // queries per second
   size: number; // key+value size in bytes
-  nkey: number; // number of keys in thousands/K
+  nkey: number; // number of keys
   nconn: number; // number of connections to each server
   failureDomain: number; // percentage of server/data that may be lost simultaneously
   ram: number[]; // list of container ram sizes to consider (in GB)
@@ -183,7 +183,7 @@ export function calculate(args: CalculatorArgs): { config: CalculatorConfig; ana
   // Amount of ram needed to store dataset, factoring in overhead
   const itemSize =
     KEYVAL_ALIGNMENT * Math.ceil((ITEM_OVERHEAD[args.runnable] + args.size) / KEYVAL_ALIGNMENT);
-  const ramData = (itemSize * args.nkey * K) / MB;
+  const ramData = (itemSize * args.nkey) / MB;
 
   // Calculate njob (vector) assuming memory-bound
   const njobMem: number[] = [];
@@ -192,7 +192,7 @@ export function calculate(args: CalculatorArgs): { config: CalculatorConfig; ana
   for (const ramGb of sortedRam) {
     const ram = (ramGb * GB) / MB; // change unit to MB
     const nLow = Math.ceil(ramData / ram); // number of shards, lower bound
-    const nkeyPerShard = (args.nkey * K) / nLow; // number of keys per shard, upper bound
+    const nkeyPerShard = args.nkey / nLow; // number of keys per shard, upper bound
     const { ramHash } = hashParameters(nkeyPerShard); // upper bound
     const n = Math.ceil(ramData / (ram - ramFixed - ramConn - ramHash));
     njobMem.push(n);

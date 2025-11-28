@@ -24,9 +24,9 @@ const size = Generators.input(sizeInput);
 const nkeyInput = Inputs.range(
   calculator.NKEY_RANGE,
   {
-    label: "Number of Keys (K)",
+    label: "Number of Keys",
     value: calculator.DEFAULT_NKEY,
-    step: 1
+    step: calculator.K
   }
 );
 const nkey = Generators.input(nkeyInput);
@@ -56,9 +56,15 @@ const config = calculator.calculate(args);
 
 ```js
 (() => {
+  const formatNumber = (n) => {
+    if (n >= calculator.M) return `${(n / calculator.M).toFixed(n % calculator.M === 0 ? 0 : 1)}M`;
+    if (n >= calculator.K) return `${(n / calculator.K).toFixed(n % calculator.K === 0 ? 0 : 1)}K`;
+    return n.toString();
+  };
+
   const items = [
     { name: "Key-Value Size", value: `${size} bytes` },
-    { name: "Number of Keys", value: `${nkey} K` }
+    { name: "Number of Keys", value: formatNumber(nkey) }
   ];
 
   return Inputs.table(items);
@@ -83,7 +89,7 @@ const config = calculator.calculate(args);
 
 ```js
 (() => {
-  const dataSize = (size * nkey * calculator.K) / calculator.MB;
+  const dataSize = (size * nkey) / calculator.MB;
 
   const dataSizeInfo = [
     { parameter: "Raw Data Size", value: `${dataSize.toFixed(2)} MB` },

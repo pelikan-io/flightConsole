@@ -23,9 +23,9 @@ const runnable = Generators.input(runnableInput);
 const qpsInput = Inputs.range(
   calculator.QPS_RANGE,
   {
-    label: "QPS (K)",
+    label: "QPS",
     value: calculator.DEFAULT_QPS,
-    step: 1
+    step: calculator.K
   }
 );
 const qps = Generators.input(qpsInput);
@@ -48,9 +48,9 @@ const size = Generators.input(sizeInput);
 const nkeyInput = Inputs.range(
   calculator.NKEY_RANGE,
   {
-    label: "Number of Keys (K)",
+    label: "Number of Keys",
     value: calculator.DEFAULT_NKEY,
-    step: 1,
+    step: calculator.K,
     disabled: runnable === "pingserver"
   }
 );
@@ -116,14 +116,20 @@ const { config, analysis } = result;
 
 ```js
 (() => {
+  const formatNumber = (n) => {
+    if (n >= calculator.M) return `${(n / calculator.M).toFixed(n % calculator.M === 0 ? 0 : 1)}M`;
+    if (n >= calculator.K) return `${(n / calculator.K).toFixed(n % calculator.K === 0 ? 0 : 1)}K`;
+    return n.toString();
+  };
+
   const items = [
     { name: "Backend", value: runnable },
-    { name: "QPS", value: `${qps} K` },
+    { name: "QPS", value: formatNumber(qps) },
   ];
 
   if (runnable !== "pingserver") {
     items.push({ name: "Key-Value Size", value: `${size} bytes` });
-    items.push({ name: "Number of Keys", value: `${nkey} M` });
+    items.push({ name: "Number of Keys", value: formatNumber(nkey) });
   }
 
   items.push(
@@ -161,7 +167,7 @@ const { config, analysis } = result;
 
 ```js
 (() => {
-  const dataSize = (size * nkey * calculator.M) / calculator.GB;
+  const dataSize = (size * nkey) / calculator.GB;
   const instancesNeeded = config.instance;
   const totalCpu = config.cpu * instancesNeeded;
   const totalRam = config.ram * instancesNeeded;

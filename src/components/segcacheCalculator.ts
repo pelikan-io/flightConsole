@@ -32,7 +32,7 @@ export {
 // ============================================================================
 export interface SegcacheCalculatorArgs {
   size: number; // key+value size in bytes
-  nkey: number; // number of keys in thousands/K
+  nkey: number; // number of keys
 }
 
 export interface SegcacheConfig {
@@ -68,8 +68,8 @@ export function calculate(args: SegcacheCalculatorArgs): SegcacheConfig {
   const itemSize =
     KEYVAL_ALIGNMENT * Math.ceil((ITEM_OVERHEAD["segcache"] + args.size) / KEYVAL_ALIGNMENT);
 
-  // Total number of keys (convert from K to actual count)
-  const totalKeys = args.nkey * K;
+  // Total number of keys
+  const totalKeys = args.nkey;
 
   // Calculate hash parameters
   const { hashPower, ramHash } = hashParameters(totalKeys);
