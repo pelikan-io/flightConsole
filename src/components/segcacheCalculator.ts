@@ -4,12 +4,17 @@
 import {
   K,
   M,
+  KB,
   MB,
   GB,
   SIZE_RANGE,
   DEFAULT_SIZE,
   NKEY_RANGE,
   DEFAULT_NKEY,
+  HASH_OCCUPANCY_RANGE,
+  DEFAULT_HASH_OCCUPANCY,
+  SEGMENT_SIZE_RANGE,
+  DEFAULT_SEGMENT_SIZE,
   HASH_OVERHEAD,
   ITEM_OVERHEAD,
   KEYVAL_ALIGNMENT,
@@ -19,12 +24,18 @@ import {
 export {
   K,
   M,
+  KB,
   MB,
   GB,
   SIZE_RANGE,
   DEFAULT_SIZE,
   NKEY_RANGE,
   DEFAULT_NKEY,
+  HASH_OCCUPANCY_RANGE,
+  DEFAULT_HASH_OCCUPANCY,
+  SEGMENT_SIZE_RANGE,
+  DEFAULT_SEGMENT_SIZE,
+  KEYVAL_ALIGNMENT,
 };
 
 // ============================================================================
@@ -33,6 +44,8 @@ export {
 export interface SegcacheCalculatorArgs {
   size: number; // key+value size in bytes
   nkey: number; // number of keys
+  hashOccupancy: number; // average number of keys per hash bucket (0.1-2.0)
+  segmentSize: number; // segment size in bytes
 }
 
 export interface SegcacheConfig {
@@ -46,10 +59,14 @@ export interface SegcacheConfig {
 // ============================================================================
 
 /**
- * Calculate hash parameters for the given number of keys
+ * Calculate hash parameters for the given number of keys and occupancy
+ * @param nkey - number of keys to store
+ * @param hashOccupancy - average number of keys per hash bucket
  */
-function hashParameters(nkey: number): { hashPower: number; ramHash: number } {
-  const hashPower = Math.ceil(Math.log2(nkey));
+function hashParameters(nkey: number, hashOccupancy: number): { hashPower: number; ramHash: number } {
+  // Calculate desired number of hash slots based on occupancy
+  const desiredSlots = nkey / hashOccupancy;
+  const hashPower = Math.ceil(Math.log2(desiredSlots));
   const ramHash = Math.ceil((HASH_OVERHEAD * Math.pow(2, hashPower)) / MB);
   return { hashPower, ramHash };
 }
@@ -72,7 +89,7 @@ export function calculate(args: SegcacheCalculatorArgs): SegcacheConfig {
   const totalKeys = args.nkey;
 
   // Calculate hash parameters
-  const { hashPower, ramHash } = hashParameters(totalKeys);
+  const { hashPower, ramHash } = hashParameters(totalKeys, args.hashOccupancy);
 
   // Calculate segment memory needed for data storage (in MB)
   const segMem = (itemSize * totalKeys) / MB;
@@ -94,5 +111,7 @@ export function getDefaultArgs(): SegcacheCalculatorArgs {
   return {
     size: DEFAULT_SIZE,
     nkey: DEFAULT_NKEY,
+    hashOccupancy: DEFAULT_HASH_OCCUPANCY,
+    segmentSize: DEFAULT_SEGMENT_SIZE,
   };
 }
